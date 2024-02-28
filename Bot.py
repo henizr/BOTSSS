@@ -4,7 +4,7 @@ from tokens import TOKEN
 from task import Task
 
 bot = TeleBot(TOKEN)
-BUTTONS = ['new task', 'todo list']
+BUTTONS = ['new task', 'show todo list']
 todo_list = list()
 
 @bot.message_handler(commands=["start"])
@@ -31,9 +31,12 @@ def answer(message):
                         "Enter the name of you task:")
     elif message.text == BUTTONS[1]:
         text_list = ''
-        
-        for i, item in enumerate(todo_list):
-            text_list += f"Task #{i + 1}: {item.name}\n"
+
+        if len(todo_list) == 0:
+            text_list = "Your todo list is empty"
+        else:
+            for i, item in enumerate(todo_list):
+                text_list += f"Task #{i + 1}: {item.name}\n"
         
         bot.send_message(
             message.chat.id,
