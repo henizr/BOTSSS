@@ -1,11 +1,21 @@
 from telebot import TeleBot
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 from tokens import TOKEN
 from task import Task
 
 bot = TeleBot(TOKEN)
 BUTTONS = ['new task', 'show todo list']
+WEEK_BUTTONS = [
+    "Понедельник", 
+    "Вторник", 
+    "Среда", 
+    "Четверг", 
+    "Пятница", 
+    "Суббота", 
+    "Воскресенье"
+    ]
 todo_list = list()
+keyboard_buttons = list()
 
 def add_new_task(message):
     bot.send_message(
@@ -60,10 +70,30 @@ def answer(message):
     else:
         new_task = Task(message.text)
         todo_list.append(new_task)
+
         bot.send_message(
             message.chat.id,
             f"Added a new task named '{new_task.name}'"
         )
+
+        keyboard = InlineKeyboardMarkup(row_width=4)
+
+        for i, day in enumerate(WEEK_BUTTONS):
+            day_btn = InlineKeyboardButton(
+            WEEK_BUTTONS[i], 
+            callback_data= day
+            )
+            keyboard_buttons.append(day_btn)
+
+        keyboard.add(*keyboard_buttons)
+
+        bot.send_message(
+            message.chat.id,
+            "Choose the day of starrting your task",
+            reply_markup=keyboard
+        )
+
+
 
 @bot.message_handler(commands=['help'])
 def help(message):
