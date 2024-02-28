@@ -105,5 +105,11 @@ def help(message):
         "/todo_list - посмотреть список дел"
         )
 
+@bot.callback_query_handler(func=lambda call: True)
+def day_select(call):
+    print(call.data)
+
+
+
 bot.polling(non_stop=True, interval=0)
 
