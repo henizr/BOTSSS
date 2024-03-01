@@ -14,7 +14,7 @@ WEEK_BUTTONS = [
     "Суббота", 
     "Воскресенье"
     ]
-todo_list = list()
+todo_list: list[Task] = list[Task]()
 keyboard_buttons = list()
 
 def add_new_task(message):
@@ -30,7 +30,7 @@ def show_todo_list(message):
         text_list = "Your todo list is empty"
     else:
         for i, item in enumerate(todo_list):
-            text_list += f"Task #{i + 1}: {item.name}\n"
+            text_list += f"Task #{i + 1}: {item.name}\n task day: {item.task_day}\n\n"
 
     bot.send_message(
         message.chat.id,
@@ -107,7 +107,15 @@ def help(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def day_select(call):
-    print(call.data)
+    if len(todo_list) > 0:
+        todo_list[-1].task_day = call.data
+
+    bot.edit_message_text(
+        f"Запланирована на {call.data}", 
+        call.message.chat.id, 
+        call.message.message_id
+        )
+    bot.answer_callback_query(call.id)
 
 
 
